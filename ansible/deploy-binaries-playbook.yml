@@ -4,7 +4,7 @@
 
 - hosts: {{ env }}
   roles:
-    - role: deploy-bunaries-standalone
+    - role: deploy-binaries-standalone
       when: scope == "standalone"
 
     - role: deploy-binaries-domain
