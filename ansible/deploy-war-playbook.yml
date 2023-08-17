@@ -1,0 +1,16 @@
+---
+
+# This playbook will deploy Application WAR in JBoss for standalone, domain or docker scope
+
+- hosts: {{ env }}
+  roles:
+    - role: deploy-war-standalone
+      when: scope == "standalone"
+
+    - role: deploy-war-domain
+      when: scope == "domain"
+
+    - role: deploy-war-docker
+      when: scope == "docker"
+  vars_files:
+    - group_vars/all/deploy-war/{{ scope }}.yml
