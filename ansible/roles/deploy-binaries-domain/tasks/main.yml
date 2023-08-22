@@ -8,18 +8,18 @@
     owner: "{{ jboss_usr }}"
     group: "{{ jboss_usr }}"
 
-- name: Backup binaries
+- name: Create a backup of the binaries
   command: "cp --backup=t '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' '{{ jboss_deployment_path }}/{{ item.backupBinariesName }}'"
   ignore_errors: yes
   loop: "{{ binaries }}"
   when: item.isDeploy | default(false) | bool == true
 
-- name: Transfer binaries to deployment directory
+- name: Transfer binaries to the deployment directory
   command: "curl -u {{ artifactory_usr }}:{{ artifactory_pass }} -o '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' -ssf {{ item.binariesLocation }}"
   loop: "{{ binaries }}"
   when: item.isDeploy | default(false) | bool == true
 
-- name: Retrieve binaries deployment informations based on assigned JBoss server group
+- name: Retrieve deployment information for binaries associated with the designated JBoss server group
   shell: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --commands=\"deployment-info --name={{ item[0].finalBinariesName }}\" | grep '{{ item[1] }} ' | awk {'print $2 $3'}"
   environment:
       JAVA_HOME: "{{ java_home_path }}"
@@ -32,7 +32,7 @@
   ignore_errors: yes
   register: binariesDeploymentInfo
 
-- name: Retrieve list of binaries to be deployed
+- name: Fetch a list of binaries intended for deployment
   set_fact:
     deployBinariesName: "{{ deployBinariesName | default([]) + [ item.item[0].finalBinariesName ] }}"
   loop: "{{ binariesDeploymentInfo.results }}"
@@ -40,7 +40,7 @@
     label: "war={{ item.item[0].finalBinariesName }}, server group={{ item.item[1] }}"
   when: item.changed | default(false) | bool == true
 
-- name: Deploy binaries into JBoss server
+- name: Perform binaries deployment onto the JBoss server
   command: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --command=\"deploy {{ jboss_deployment_path }}/{{ item }} --force\""
   environment:
       JAVA_HOME: "{{ java_home_path }}"
@@ -48,7 +48,7 @@
   loop_control:
     label: "war={{ item }}"
 
-- name: Assign new binaries to respective JBoss server group 
+- name: Assign the new binaries to their corresponding JBoss server group
   command: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --command=\"deploy --name={{ item.item[0].finalBinariesName }} --server-groups={{ item.item[1] }}\""
   environment:
       JAVA_HOME: "{{ java_home_path }}"
