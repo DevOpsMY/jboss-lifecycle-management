@@ -15,7 +15,7 @@
   when: item.isDeploy | default(false) | bool == true
 
 - name: Transfer binaries to the deployment directory
-  command: "curl -u {{ artifactory_usr }}:{{ artifactory_pass }} -o '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' -ssf {{ item.binariesLocation }}"
+  command: "curl -u {{ pkg_mgmt_usr }}:{{ pkg_mgmt_pass }} -o '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' -ssf {{ item.binariesLocation }}"
   loop: "{{ binaries }}"
   when: item.isDeploy | default(false) | bool == true
 
@@ -25,10 +25,10 @@
       JAVA_HOME: "{{ java_home_path }}"
   with_nested:
     - "{{ binaries }}"
-    - "{{ jboss_deployment_server_group }}"
+    - "{{ jboss_server_group }}"
   loop_control:
     label: "war={{ item[0].finalBinariesName }}, server group={{ item[1] }}"
-  when: item[0].isDeploy | default(false) | bool == true and ((item[0].isServerGroup1 | bool == true and item[1]  == jboss_deployment_server_group[0]) or (item[0].isServerGroup2 | bool == true and item[1] == jboss_deployment_server_group[1]) or (item[0].isServerGroup3 | bool == true and item[1] == jboss_deployment_server_group[2]) or (item[0].isServerGroup4 | bool == true and item[1] == jboss_deployment_server_group[3]) or (item[0].isServerGroup5 | bool == true and item[1] == jboss_deployment_server_group[4]))
+  when: item[0].isDeploy | default(false) | bool == true and ((item[0].isServerGroup1 | bool == true and item[1]  == jboss_server_group[0]) or (item[0].isServerGroup2 | bool == true and item[1] == jboss_server_group[1]) or (item[0].isServerGroup3 | bool == true and item[1] == jboss_server_group[2]) or (item[0].isServerGroup4 | bool == true and item[1] == jboss_server_group[3]) or (item[0].isServerGroup5 | bool == true and item[1] == jboss_server_group[4]))
   ignore_errors: yes
   register: binariesDeploymentInfo
 
