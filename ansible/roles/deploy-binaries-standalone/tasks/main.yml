@@ -1,0 +1,32 @@
+---
+
+- name: Create deployment directory
+  file:
+    path: "{{ jboss_deployment_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ ssh_usr }}"
+    group: "{{ ssh_usr }}"
+
+- name: Create a backup of the binaries
+  command: "cp --backup=t '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' '{{ jboss_deployment_path }}/{{ item.backupBinariesName }}'"
+  ignore_errors: yes
+  loop: "{{ binaries }}"
+  when: item.isDeploy | default(false) | bool == true
+
+- name: Transfer binaries to the deployment directory
+  command: "curl -u {{ pkg_mgmt_usr }}:{{ pkg_mgmt_pass }} -o '{{ jboss_deployment_path }}/{{ item.finalBinariesName }}' -ssf {{ item.binariesLocation }}"
+  loop: "{{ binaries }}"
+  loop_control:
+    label: "{{ item.finalBinariesName }}"
+  when: item.isDeploy | default(false) | bool == true
+
+
+- name: Perform binaries deployment onto the JBoss server
+  command: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --command=\"deploy {{ jboss_deployment_path }}/{{ item.finalBinariesName }} --force\""
+  environment:
+      JAVA_HOME: "{{ java_home_path }}"
+  loop: "{{ binaries }}"
+  loop_control:
+    label: "{{ item.finalBinariesName }}"
+  when: item.isDeploy | default(false) | bool == true
