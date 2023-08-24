@@ -1,6 +1,8 @@
 ---
 
 # Variables for deploying binaries into a JBoss server in domain mode
+java_home_path: "/usr/java/jdk1.8.0_171"
+
 jboss_console_url: "127.0.0.1:8080"
 
 jboss_cli_path: "/opt/jboss/bin"
