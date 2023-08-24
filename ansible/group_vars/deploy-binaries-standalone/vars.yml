@@ -1,0 +1,16 @@
+---
+
+# Variables for deploying binaries into a JBoss server in domain mode
+java_home_path: "/usr/java/jdk1.8.0_171"
+
+pkg_mgmt_root_url: "https://devops.my/libs-release-local"
+
+jboss_console_url: "127.0.0.1:8080"
+
+jboss_cli_path: "/opt/jboss/bin"
+
+jboss_deployment_path: "/tmp"
+
+binaries:
+  - { finalBinariesName: "devopsmy.war", backupBinariesName: "devopsmy.war.bak{{ lookup('pipe','date +%Y%m%d-%H%M%S') }}", binariesLocation: "{{ pkg_mgmt_root_url }}/devopsmy.war", isDeploy: "{{ is_devopsmy_war_deployment }}" }
+  - { finalBinariesName: "devopsmy.jar", backupBinariesName: "devopsmy.jar.bak{{ lookup('pipe','date +%Y%m%d-%H%M%S') }}", binariesLocation: "{{ pkg_mgmt_root_url }}/devopsmy.jar", isDeploy: "{{ is_devopsmy_jar_deployment }}" }
