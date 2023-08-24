@@ -1,0 +1,27 @@
+---
+
+- name: Create deployment directory
+  file:
+    path: "{{ docker_host_jboss_deployment_path }}"
+    state: directory
+    recurse: yes
+
+- name: Create a backup of the binaries
+  command: "cp --backup=t '{{ docker_host_jboss_deployment_path }}/{{ item.finalBinariesName }}' '{{ docker_host_jboss_deployment_path }}/{{ item.backupBinariesName }}'"
+  ignore_errors: yes
+  loop: "{{ binaries }}"
+  when: item.isDeploy | default(false) | bool == true
+
+- name: Transfer binaries to the deployment directory
+  command: "curl -u {{ pkg_mgmt_usr }}:{{ pkg_mgmt_passz }} -o '{{ docker_host_jboss_deployment_path }}/{{ item.finalBinariesName }}' -ssf {{ item.binariesLocation }}"
+  loop: "{{ binaries }}"
+  loop_control:
+    label: "{{ item.finalBinariesName }}"
+  when: item.isDeploy | default(false) | bool == true
+
+- name: Perform binaries deployment onto the JBoss server
+  command: "docker exec {{ docker_container_name }} bash -c \"'{{ docker_container_jboss_cli_path }}/jboss-cli.sh' --connect --controller=127.0.0.1:9990 --command=\\\"deploy {{ docker_container_jboss_deployment_path }}/{{ item.finalBinariesName }} --force\\\"\""
+  loop: "{{ binaries }}"
+  loop_control:
+    label: "{{ item.finalBinariesName }}"
+  when: item.isDeploy | default(false) | bool == true
