@@ -1,0 +1,17 @@
+---
+
+# This playbook will configure JMS Queue in JBoss for standalone, domain or docker scope
+
+- hosts: {{ env }}
+  roles:
+    - role: configure-jms-queue-standalone
+      when: scope == "standalone"
+
+    - role: configure-jms-queue-domain
+      when: scope == "domain"
+
+    - role: configure-jms-queue-docker
+      when: scope == "docker"
+  vars_files:
+    - group_vars/configure-jms-queue-{{ scope }}/vault.yml
+    - group_vars/configure-jms-queue-{{ scope }}/vars.yml
