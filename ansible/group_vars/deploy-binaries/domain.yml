@@ -1,0 +1,19 @@
+---
+
+# Variables for deploying binaries into a JBoss server in domain mode
+jboss_console_url: "127.0.0.1:8080"
+
+jboss_cli_path: "/opt/jboss/bin"
+
+jboss_deployment_path: "/tmp"
+
+jboss_server_group:
+  - "ServerGroup1"
+  - "ServerGroup2"
+  - "ServerGroup3"
+  - "ServerGroup4"
+  - "ServerGroup5"
+
+binaries:
+  - { finalBinariesName: "devopsmy.war", backupBinariesName: "devopsmy.war.bak{{ lookup('pipe','date +%Y%m%d-%H%M%S') }}", binariesLocation: "{{ pkg_mgmt_root_url }}/devopsmy.war", isDeploy: "{{ is_devopsmy_war_deployment }}", isServerGroup1: "true", isServerGroup2: "true", isServerGroup3: "false", isServerGroup4: "false", isServerGroup5: "true" }
+  - { finalBinariesName: "devopsmy.jar", backupBinariesName: "devopsmy.jar.bak{{ lookup('pipe','date +%Y%m%d-%H%M%S') }}", binariesLocation: "{{ pkg_mgmt_root_url }}/devopsmy.jar", isDeploy: "{{ is_devopsmy_jar_deployment }}", isServerGroup1: "true", isServerGroup2: "true", isServerGroup3: "false", isServerGroup4: "false", isServerGroup5: "true" }
