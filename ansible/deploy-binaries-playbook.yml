@@ -13,5 +13,5 @@
     - role: deploy-binaries-docker
       when: scope == "docker"
   vars_files:
-    - group_vars/deploy-binaries/vault.yml
-    - group_vars/deploy-binaries/{{ scope }}.yml
+    - group_vars/deploy-binaries-{{ scope }}/vault.yml
+    - group_vars/deploy-binaries-{{ scope }}/vars.yml
