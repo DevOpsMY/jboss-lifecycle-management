@@ -1,6 +1,6 @@
 ---
 
-# Variables for deploying binaries into a JBoss server in domain mode
+# Variables for deploying binaries into a JBoss server in standalone mode
 java_home_path: "/usr/java/jdk1.8.0_171"
 
 pkg_mgmt_root_url: "https://devops.my/libs-release-local"
