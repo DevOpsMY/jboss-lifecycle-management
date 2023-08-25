@@ -1,6 +1,6 @@
 ---
 
-# Variables for deploying binaries into a JBoss server in domain mode
+# Variables for deploying binaries into a JBoss server in docker mode
 pkg_mgmt_root_url: "https://devops.my/libs-release-local"
 
 docker_container_name: "jboss7"
