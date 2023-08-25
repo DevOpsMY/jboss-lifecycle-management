@@ -5,7 +5,7 @@ java_home_path: "/usr/java/jdk1.8.0_171"
 
 pkg_mgmt_root_url: "https://devops.my/libs-release-local"
 
-jboss_console_url: "127.0.0.1:8080"
+jboss_console_url: "127.0.0.1:9990"
 
 jboss_cli_path: "/opt/jboss/bin"
 
