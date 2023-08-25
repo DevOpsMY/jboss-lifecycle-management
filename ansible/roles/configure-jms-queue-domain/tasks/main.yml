@@ -1,0 +1,26 @@
+---
+
+- name: Backup JBoss configuration file
+  command: "cp --backup=t '{{ jboss_config_path }}/domain.xml' '{{ jboss_config_path }}/domain.xml.bak{{ lookup('pipe','date +%Y%m%d-%H%M%S') }}'"
+
+- name: Retrieve JMS Queue informations
+  command: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --commands=\"/profile={{ item[1] }}/subsystem=messaging-activemq/server=default/jms-queue={{ item[0].jmsQueueName }}:read-resource()\""
+  environment:
+      JAVA_HOME: "{{ java_home_path }}"
+  with_nested:
+    - "{{ jboss_jms_queue }}"
+    - "{{ jboss_profile }}"
+  loop_control:
+    label: "jms queue={{ item[0].jmsQueueName }}, jboss profile={{ item[1] }}"
+  when: (item[0].isProfile1 | bool == true and item[1]  == jboss_profile[0]) or (item[0].isProfile2 | bool == true and item[1] == jboss_profile[1]) or (item[0].isProfile3 | bool == true and item[1] == jboss_profile[2]) or (item[0].isProfile4 | bool == true and item[1] == jboss_profile[3]) or (item[0].isProfile5 | bool == true and item[1] == jboss_profile[4])
+  ignore_errors: yes
+  register: jmsQueueInfo
+
+- name: Configure JMS Queue
+  command: "'{{ jboss_cli_path }}/jboss-cli.sh' --connect --controller={{ jboss_console_url }} --command=\"/profile={{ item.item[1] }}/subsystem=messaging-activemq/server=default/jms-queue={{ item.item[0].jmsQueueName }}:add(entries=[{{ item.item[0].jmsQueueJndiName }}])\""
+  environment:
+      JAVA_HOME: "{{ java_home_path }}"
+  loop: "{{ jmsQueueInfo.results }}"
+  loop_control:
+    label: "jms queue={{ item.item[0].jmsQueueName }}, jboss profile={{ item.item[1] }}"
+  when: item.changed | default(false) | bool == true and item.rc != 0
