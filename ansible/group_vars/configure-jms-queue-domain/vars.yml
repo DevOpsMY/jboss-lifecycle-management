@@ -1,0 +1,21 @@
+---
+
+# Variables for configuring jms queue into a JBoss server in domain mode
+java_home_path: "/usr/java/jdk1.8.0_171"
+
+jboss_config_path: "/opt/jboss//domain/configuration"
+
+jboss_cli_path: "/opt/jboss/bin"
+
+jboss_console_url: "127.0.0.1:9990"
+
+jboss_profile:
+  - "Profile1"
+  - "Profile2"
+  - "Profile3"
+  - "Profile4"
+  - "Profile5"
+
+jboss_jms_queue:
+  - { jmsQueueName: "DevOpsGlobal", jmsQueueJndiName: "java:/jms/queue/DevOpsGlobal", isProfile1: "true", isProfile2: "false", isProfile3: "false", isProfile4: "true", isProfile5: "true" }
+  - { jmsQueueName: "DevOpsMy", jmsQueueJndiName: "java:/jms/queue/DevOpsMy", isProfile1: "true", isProfile2: "true", isProfile3: "false", isProfile4: "false", isProfile5: "true" }
